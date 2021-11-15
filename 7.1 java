@@ -1,0 +1,12 @@
+public class FileUtils {
+
+    public static long calculateFolderSize(String path) {
+        File mypath = new File(path);
+        long length = 0;
+        if (!mypath.isDirectory() || !mypath.exists()) throw new IllegalArgumentException();
+       	for (File file : mypath.listFiles()) {
+            length += file.length();
+        }
+        return length;
+    }
+}
