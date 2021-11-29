@@ -1,0 +1,50 @@
+class MyFileVisitor extends SimpleFileVisitor<Path> {
+    private ArrayList<Path> paths = new ArrayList<>();
+
+    public ArrayList<Path> getPaths() {
+        return paths;
+    }
+
+    @Override
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        paths.add(file);
+        return FileVisitResult.CONTINUE;
+    }
+}
+public class Utils {
+
+    public static long calculateFolderSize(String path) {
+        File mypath = new File(path);
+        long length = 0;
+        if (!mypath.isDirectory() || !mypath.exists()) throw new IllegalArgumentException();
+        for (File file : mypath.listFiles()) {
+            length += file.length();
+        }
+        return length;
+    }
+
+    public static void copyFolder(String sourceDirectory, String destinationDirectory) {
+        File directory = new File(sourceDirectory);
+        Path mainPath = Paths.get(sourceDirectory);
+        Path copyDir = Paths.get(destinationDirectory);
+
+        if (!directory.exists()) throw new IllegalArgumentException();
+        else
+        {
+            try{
+                if(!Files.exists(copyDir)) Files.createDirectory(copyDir);
+                MyFileVisitor myFileVisitor = new MyFileVisitor();
+                Files.walkFileTree(mainPath,myFileVisitor);
+                for(Path path : myFileVisitor.getPaths()){
+                    Path test = new File(destinationDirectory+File.separator+path).toPath();
+                    Files.copy(path,new File(copyDir+File.separator+path.getFileName()).toPath(),StandardCopyOption.REPLACE_EXISTING);
+                }
+            }catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+
+        }
+        //TODO реализовать метод копирования папки sourceDirectory в destinationDirectory
+    }
+}
